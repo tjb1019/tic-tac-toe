@@ -22,7 +22,8 @@ export function Game({ onGameEnd }: GameProps) {
   const onPlayerSelection = (player: PlayerType, index: number) => {
     setBoard(prev => {
       prev[index] = player;
-      checkForWinner([...prev]);
+      const gameOver = checkForWinner([...prev]);
+      if (!gameOver) toggleCurrentPlayer();
       return [...prev];
     });
   }
@@ -31,6 +32,7 @@ export function Game({ onGameEnd }: GameProps) {
     // check for tie
     if (board.every(Boolean) && board.length >= 9) {
       endGame(true);
+      return false;
     }
     
     const splitBoard: Array<string[]> = [];
@@ -43,6 +45,7 @@ export function Game({ onGameEnd }: GameProps) {
       const firstChar = row[0];
       if (Boolean(firstChar) && row.every(char => char === firstChar)) {
         endGame();
+        return true;
       }
     });
 
@@ -64,12 +67,19 @@ export function Game({ onGameEnd }: GameProps) {
     Boolean(secondColChar) && secondCol.every(char => char === secondColChar) ||
     Boolean(thirdColChar) && thirdCol.every(char => char === thirdColChar)) {
       endGame();
-    } else {
-      toggleCurrentPlayer();
+      return true;
     }
     
 
     // check for diagonal win
+    const diagonalOne = [splitBoard[0][0], splitBoard[1][1], splitBoard[2][2]]
+    const diagonalTwo = [splitBoard[0][2], splitBoard[1][1], splitBoard[2][0]]
+    if (diagonalOne.every(char => Boolean(char) && char === diagonalOne[0]) ||
+      diagonalTwo.every(char => Boolean(char) && char === diagonalTwo[0])
+    ) {
+      endGame();
+      return true;
+    }
   }
 
   const toggleCurrentPlayer = () => {

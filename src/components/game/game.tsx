@@ -5,12 +5,15 @@ import clsx from 'clsx';
 import { EndBanner } from '../end-banner/end-banner';
 
 export type PlayerType = 'x' | 'o';
-const defaultBoardState = ['', '', '', '', '', '', '', '', '',];
 
-export function Game() {
+interface GameProps {
+  onGameEnd: () => void;
+}
+
+export function Game({ onGameEnd }: GameProps) {
   const [currentPlayer, setCurrentPlayer] = useState<PlayerType>('x');
   const [gameOver, setGameOver] = useState<boolean>(false);
-  const [board, setBoard] = useState<string[]>(defaultBoardState);
+  const [board, setBoard] = useState<string[]>(new Array(9).fill(''));
   const [score, setScore] = useState<Record<string, number>>({ p1Wins: 0, p2Wins: 0, ties: 0 });
 
   const onPlayerSelection = (player: PlayerType, index: number) => {
@@ -35,14 +38,7 @@ export function Game() {
     splitBoard.forEach((row) => {
       const firstChar = row[0];
       if (Boolean(firstChar) && row.every(char => char === firstChar)) {
-        setGameOver(true);
-        setScore(prev => {
-          const p1Win = currentPlayer === 'x';
-          const p2Win = currentPlayer === 'o';
-          if (p1Win) prev.p1Wins += 1;
-          else if (p2Win) prev.p2Wins += 1;
-          return {...prev };
-        });
+        endGame();
       }
     });
 
@@ -63,19 +59,30 @@ export function Game() {
     if (Boolean(firstColChar) && firstCol.every(char => char === firstColChar) ||
     Boolean(secondColChar) && secondCol.every(char => char === secondColChar) ||
     Boolean(thirdColChar) && thirdCol.every(char => char === thirdColChar)) {
-      setGameOver(true);
+      endGame();
     }
     
 
     // check for diagonal win
   }
+
+  const endGame = () => {
+    setGameOver(true);
+    setScore(prev => {
+      const p1Win = currentPlayer === 'x';
+      const p2Win = currentPlayer === 'o';
+      if (p1Win) prev.p1Wins += 1;
+      else if (p2Win) prev.p2Wins += 1;
+      return {...prev };
+    });
+  }
   
   const onResetBtnClick = () => {
+    onGameEnd();
   }
 
   const onNextRoundClick = () => {
-    setBoard([...defaultBoardState]);
-    setGameOver(false);
+    onGameEnd();
   }
   
   return (
@@ -114,7 +121,7 @@ export function Game() {
             </span>
           </div>
         </div>
-      {gameOver && <EndBanner player={'x'} onNextRoundClick={onNextRoundClick} />}
+      {gameOver && <EndBanner player={currentPlayer} onNextRoundClick={onNextRoundClick} />}
     </>
   )
 }

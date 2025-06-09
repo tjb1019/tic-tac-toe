@@ -17,21 +17,28 @@ const playerMap: Record<PlayerType, { label: string, color: string }> = {
 interface EndBannerProps {
   player: PlayerType;
   onNextRoundClick: () => void;
+  winner?: boolean;
 }
 
-export function EndBanner({ player, onNextRoundClick }: EndBannerProps) {
+export function EndBanner({ player, winner, onNextRoundClick }: EndBannerProps) {
   
   
   return (
     <div className={styles.root}>
       <div className={styles.banner}>
-        <span className="heading-xs uppercase">{playerMap[player].label} wins!</span>
+        {winner && <span className="heading-xs uppercase">{playerMap[player].label} wins!</span>}
         <div className={styles.middle}>
-          <img src={`${player}-icon.svg`} />
-          <span className={clsx(styles.mainText, 'heading-lg', 'uppercase', { [styles.blue]: playerMap[player].color === 'blue', [styles.orange]: playerMap[player].color === 'orange' })}>TAKES THE ROUND</span>
+          {winner ? (
+            <>
+              <img src={`${player}-icon.svg`} />
+              <span className={clsx(styles.mainText, 'heading-lg', 'uppercase', { [styles.blue]: playerMap[player].color === 'blue', [styles.orange]: playerMap[player].color === 'orange' })}>TAKES THE ROUND</span>
+            </>
+          ) : (
+            <span className="heading-lg uppercase">Round Tied</span>
+          )}
         </div>
         <div className={styles.actions}>
-          <Button label="Quit" type="secondary" onBtnClick={() => {}} />
+          <Button label="Quit" type="secondary" onBtnClick={onNextRoundClick} />
           <Button label="Next Round" onBtnClick={onNextRoundClick} />
         </div>
       </div>

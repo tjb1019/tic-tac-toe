@@ -14,6 +14,7 @@ export function Game({ onGameEnd }: GameProps) {
   const [currentPlayer, setCurrentPlayer] = useState<PlayerType>('x');
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [board, setBoard] = useState<string[]>(new Array(9).fill(''));
+  const [winner, setWinner] = useState<PlayerType | null>(null);
   const p1Wins = localStorage.getItem('p1Wins') || '0';
   const p2Wins = localStorage.getItem('p2Wins') || '0';
   const ties = localStorage.getItem('ties') || '0';
@@ -27,6 +28,11 @@ export function Game({ onGameEnd }: GameProps) {
   }
 
   const checkForWinner = (board: string[]) => {
+    // check for tie
+    if (board.every(Boolean) && board.length >= 9) {
+      endGame(true);
+    }
+    
     const splitBoard: Array<string[]> = [];
     while (board.length) {
       splitBoard.push(board.splice(0, 3));
@@ -73,17 +79,26 @@ export function Game({ onGameEnd }: GameProps) {
     });
   }
 
-  const endGame = () => {
+  const endGame = (tie?: boolean) => {
     setGameOver(true);
     // update standings
-    const p1Win = currentPlayer === 'x';
-    const p2Win = currentPlayer === 'o';
-    if (p1Win) {
-      const winCount = Number(p1Wins) + 1;
-      localStorage.setItem('p1Wins', String(winCount));
-    } else if (p2Win) {
-      const winCount = Number(p2Wins) + 1;
-      localStorage.setItem('p2Wins', String(winCount));
+    if (tie) {
+      const tieCount = Number(ties) + 1;
+      localStorage.setItem('ties', String(tieCount));
+      setWinner(null);
+    } else {
+      const p1Win = currentPlayer === 'x';
+      const p2Win = currentPlayer === 'o';
+      
+      if (p1Win) {
+        const winCount = Number(p1Wins) + 1;
+        localStorage.setItem('p1Wins', String(winCount));
+        setWinner('x');
+      } else if (p2Win) {
+        const winCount = Number(p2Wins) + 1;
+        localStorage.setItem('p2Wins', String(winCount));
+        setWinner('o');
+      }
     }
   }
 
@@ -127,7 +142,7 @@ export function Game({ onGameEnd }: GameProps) {
             </span>
           </div>
         </div>
-      {gameOver && <EndBanner player={currentPlayer} onNextRoundClick={onNewGame} />}
+      {gameOver && <EndBanner player={currentPlayer} winner={Boolean(winner)} onNextRoundClick={onNewGame} />}
     </>
   )
 }

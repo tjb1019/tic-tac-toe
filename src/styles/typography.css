@@ -1,0 +1,19 @@
+.heading-lg {
+  font-size: 40px;
+  font-weight: 700;
+}
+.heading-md {
+  font-size: 24px;
+  font-weight: 700;
+}
+.heading-sm {
+  font-size: 20px;
+  font-weight: 700;
+}
+.heading-xs {
+  font-size: 16px;
+  font-weight: 700;
+}
+.uppercase {
+  text-transform: uppercase;
+}

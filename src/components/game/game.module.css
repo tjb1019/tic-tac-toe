@@ -1,0 +1,89 @@
+.root {
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .gameIcons {
+      display: flex;
+      gap: 6px;
+      
+      img {
+        height: 30px;
+      }
+    }
+
+    .currentTurn {
+      border-radius: 8px;
+      padding: 8px 16px;
+      background-color: var(--navy-light);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      img {
+        height: 20px;
+        filter: brightness(0) saturate(100%) invert(76%) sepia(9%) saturate(468%) hue-rotate(153deg) brightness(97%) contrast(91%);
+      }
+    }
+  }
+
+  .board {
+    margin: 24px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+
+    .tile {
+      border-radius: 16px;
+      height: 140px;
+      width: 140px;
+      display: flex;
+      background-color: var(--navy-light);
+      box-shadow: 0 8px 0 #10212A;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      img {
+        margin: auto;
+        height: 64px;
+      }
+    }
+  }
+
+  .scoreBoard {
+    display: flex;
+    justify-content: space-between;
+
+    .tile {
+      border-radius: 16px;
+      padding: 8px 16px;
+      height: 72px;
+      width: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--navy-dark);
+
+      &.blue {
+        background-color: var(--blue-light);
+      }
+
+      &.grey {
+        background-color: var(--grey-dark);
+      }
+
+      &.orange {
+        background-color: var(--orange-dark);
+      }
+    }
+  }
+}

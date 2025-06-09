@@ -1,0 +1,19 @@
+.root {
+  border-radius: 8px;
+  border: none;
+  padding: 8px;
+  background-color: var(--grey-dark);
+  box-shadow: 0 2px 0 #6B8997;
+  display: flex;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: var(--grey-light);
+  }
+  
+  img {
+    height: 20px;
+    margin: auto;
+  }
+}

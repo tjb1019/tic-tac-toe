@@ -1,0 +1,42 @@
+.root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  .banner {
+    height: 266px;
+    background-color: var(--navy-light);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+
+    .middle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      .mainText {
+        &.blue {
+          color: var(--blue-dark);
+        }
+
+        &.orange {
+          color: var(--orange-dark)
+        }
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+  }
+}

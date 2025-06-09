@@ -14,17 +14,15 @@ export function Game({ onGameEnd }: GameProps) {
   const [currentPlayer, setCurrentPlayer] = useState<PlayerType>('x');
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [board, setBoard] = useState<string[]>(new Array(9).fill(''));
-  const [score, setScore] = useState<Record<string, number>>({ p1Wins: 0, p2Wins: 0, ties: 0 });
+  const p1Wins = localStorage.getItem('p1Wins') || '0';
+  const p2Wins = localStorage.getItem('p2Wins') || '0';
+  const ties = localStorage.getItem('ties') || '0';
 
   const onPlayerSelection = (player: PlayerType, index: number) => {
     setBoard(prev => {
       prev[index] = player;
       checkForWinner([...prev]);
       return [...prev];
-    });
-    setCurrentPlayer(prev => {
-      if (prev === 'x') return 'o';
-      else return 'x';
     });
   }
 
@@ -60,28 +58,36 @@ export function Game({ onGameEnd }: GameProps) {
     Boolean(secondColChar) && secondCol.every(char => char === secondColChar) ||
     Boolean(thirdColChar) && thirdCol.every(char => char === thirdColChar)) {
       endGame();
+    } else {
+      toggleCurrentPlayer();
     }
     
 
     // check for diagonal win
   }
 
-  const endGame = () => {
-    setGameOver(true);
-    setScore(prev => {
-      const p1Win = currentPlayer === 'x';
-      const p2Win = currentPlayer === 'o';
-      if (p1Win) prev.p1Wins += 1;
-      else if (p2Win) prev.p2Wins += 1;
-      return {...prev };
+  const toggleCurrentPlayer = () => {
+    setCurrentPlayer(prev => {
+      if (prev === 'x') return 'o';
+      else return 'x';
     });
   }
-  
-  const onResetBtnClick = () => {
-    onGameEnd();
+
+  const endGame = () => {
+    setGameOver(true);
+    // update standings
+    const p1Win = currentPlayer === 'x';
+    const p2Win = currentPlayer === 'o';
+    if (p1Win) {
+      const winCount = Number(p1Wins) + 1;
+      localStorage.setItem('p1Wins', String(winCount));
+    } else if (p2Win) {
+      const winCount = Number(p2Wins) + 1;
+      localStorage.setItem('p2Wins', String(winCount));
+    }
   }
 
-  const onNextRoundClick = () => {
+  const onNewGame = () => {
     onGameEnd();
   }
   
@@ -97,7 +103,7 @@ export function Game({ onGameEnd }: GameProps) {
               <img src={`${currentPlayer}-icon.svg`} />
               <span>TURN</span>
             </span>
-            <ResetButton onBtnClick={onResetBtnClick} />
+            <ResetButton onBtnClick={onNewGame} />
           </div>
           <div className={styles.board}>
             {board.map((tile, index) => {
@@ -109,19 +115,19 @@ export function Game({ onGameEnd }: GameProps) {
           <div className={styles.scoreBoard}>
             <span className={clsx(styles.tile, styles.blue)}>
               <span>P1</span>
-              <span className="heading-md">{score.p1Wins}</span>
+              <span className="heading-md">{p1Wins}</span>
             </span>
             <span className={clsx(styles.tile, styles.grey)}>
               <span>TIES</span>
-              <span className="heading-md">{score.ties}</span>
+              <span className="heading-md">{ties}</span>
             </span>
             <span className={clsx(styles.tile, styles.orange)}>
               <span>P2</span>
-              <span className="heading-md">{score.p2Wins}</span>
+              <span className="heading-md">{p2Wins}</span>
             </span>
           </div>
         </div>
-      {gameOver && <EndBanner player={currentPlayer} onNextRoundClick={onNextRoundClick} />}
+      {gameOver && <EndBanner player={currentPlayer} onNextRoundClick={onNewGame} />}
     </>
   )
 }
